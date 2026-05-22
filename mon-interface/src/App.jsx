@@ -5,7 +5,6 @@ import uibuilder from 'node-red-contrib-uibuilder/front-end/uibuilder.esm.js';
 
 import BoutonLED from './BoutonLED';
 import FlecheNavigation from './FlecheNavigation';
-import InfoConsommation from './InfoConsommation';
 import PageAccueil from './PageAccueil';
 import ConsoActuelle_VU from './ConsoActuelle_VU';
 import PageRiceCooker from './PageRiceCooker';
@@ -29,14 +28,12 @@ function App() {
   useEffect(() => {
     uibuilder.start();
 
-    // 1. Au chargement (F5), on demande l'état des leds à Node-RED
-    uibuilder.onChange('ioConnected', (estConnecte) => {
+      uibuilder.onChange('ioConnected', (estConnecte) => {
       if (estConnecte) {
         uibuilder.send({ topic: "fetch_initial_state", payload: {} });
       }
     });
 
-    // 2. Écoute de tous les messages entrants
     uibuilder.onChange('msg', (nouveauMsg) => {
       if (!nouveauMsg || !nouveauMsg.payload) return;
 
@@ -215,7 +212,7 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Consommation Actuelle</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <ConsoActuelle_VU/>
+                <ConsoActuelle_VU p_micro={10} p_rice={100} p_usb_b={25} p_usb_c={30} p_frigo={75} p_leds={17} p_total={257} p_max={300} />
               </div>
             </section>
           )}
@@ -239,7 +236,12 @@ function App() {
 
         <div style={{ display: 'flex', alignSelf: 'bottom', gap: '10px', justifyContent: 'center', marginTop: '25px', marginBottom: '0px', zIndex: nb_pages }}>
           {barres.map((_, i) => (
-            <div key={i} style={{ width: '20%', height: i === page ? '8px' : '4px', borderRadius: '4px', backgroundColor: i === page ? '#9e4728' : '#d2c5b6', transition: 'all 0.3s ease' }} />
+            <div key={i} style={{ 
+              width: '20%',
+              height: i === page ? '8px' : '4px',
+              borderRadius: '4px',
+              backgroundColor: i === page ? '#9e4728' : '#d2c5b6',
+              transition: 'all 0.3s ease' }} />
           ))}
         </div>
 

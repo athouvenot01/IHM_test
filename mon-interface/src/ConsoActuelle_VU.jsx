@@ -1,6 +1,32 @@
 import React from 'react';
 
-function ConsoActuelle_VU() {
+function ConsoActuelle_VU({p_micro, p_rice, p_usb_b, p_usb_c, p_frigo, p_leds, p_total, p_max}) {
+  
+  const prop_micro = (p_micro / p_max) * 100;
+  const prop_rice = (p_rice / p_max) * 100;
+  const prop_usb_b = (p_usb_b / p_max) * 100;
+  const prop_usb_c = (p_usb_c / p_max) * 100;
+  const prop_frigo = (p_frigo / p_max) * 100;
+  const prop_leds = (p_leds / p_max) * 100;
+  const prop_dispo = 100 - (prop_micro + prop_rice + prop_usb_b + prop_usb_c + prop_frigo + prop_leds);
+
+  const s1 = prop_micro;
+  const s2 = s1 + prop_rice;
+  const s3 = s2 + prop_usb_b;
+  const s4 = s3 + prop_usb_c;
+  const s5 = s4 + prop_frigo;
+  const s6 = s5 + prop_leds;
+
+  const gradientCamembert = `conic-gradient(
+    #b19ffb 0% ${s1}%, 
+    #fcd34d ${s1}% ${s2}%, 
+    #4ade80 ${s2}% ${s3}%, 
+    #60a5fa ${s3}% ${s4}%, 
+    #b45309 ${s4}% ${s5}%, 
+    #f87171 ${s5}% ${s6}%,
+    #e5e5ea00 ${s6}% 100% 
+  )`;
+  
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '15px', flex: 1, boxSizing: 'border-box' }}>
       
@@ -21,18 +47,19 @@ function ConsoActuelle_VU() {
             border: '2px solid #9e4728',
             boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
             backgroundColor: '#e5e5ea', // Couleur de secours si le camembert plante
-            background: 'conic-gradient(#b19ffb 0% 25%, #fcd34d 25% 45%, #4ade80 45% 55%, #60a5fa 55% 70%, #b45309 70% 90%, #f87171 90% 100%)'
+            background: gradientCamembert
           }} />
         </div>
 
         {/* --- BLOC DROITE : Liste des Appareils --- */}
         <div style={{ ...styleBloc, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '20px', paddingLeft: '15px' }}>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#b19ffb'}}/> <p style={styleLabel}>Microcontrolleurs</p> <p style={styleValeur}>-- %</p></div>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#fcd34d'}}/> <p style={styleLabel}>Rice Cooker</p> <p style={styleValeur}>-- %</p></div>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#4ade80'}}/> <p style={styleLabel}>USB-B</p> <p style={styleValeur}>-- %</p></div>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#60a5fa'}}/> <p style={styleLabel}>USB-C</p> <p style={styleValeur}>-- %</p></div>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#b45309'}}/> <p style={styleLabel}>Frigo</p> <p style={styleValeur}>-- %</p></div>
-          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#f87171'}}/> <p style={styleLabel}>LEDS</p> <p style={styleValeur}>-- %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#b19ffb'}}/> <p style={styleLabel}>Microcontrolleurs</p> <p style={styleValeur}>{prop_micro.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#fcd34d'}}/> <p style={styleLabel}>Rice Cooker</p> <p style={styleValeur}>{prop_rice.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#4ade80'}}/> <p style={styleLabel}>USB-B</p> <p style={styleValeur}>{prop_usb_b.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#60a5fa'}}/> <p style={styleLabel}>USB-C</p> <p style={styleValeur}>{prop_usb_c.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#b45309'}}/> <p style={styleLabel}>Frigo</p> <p style={styleValeur}>{prop_frigo.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#f87171'}}/> <p style={styleLabel}>LEDS</p> <p style={styleValeur}>{prop_leds.toFixed(1)} %</p></div>
+          <div style={styleLigneListe}><span style={{...stylePastille, backgroundColor: '#ffffff', border: '1px solid #b45309'}}/> <p style={styleLabel}>Disponible</p> <p style={styleValeur}>{prop_dispo.toFixed(1)} %</p></div>
         </div>
 
       </div>
@@ -48,7 +75,7 @@ function ConsoActuelle_VU() {
       }}>
         <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation Totale :</h2>
         <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: '#e67224' }}>
-          -- W
+          {p_total} W
         </p>
       </div>
 

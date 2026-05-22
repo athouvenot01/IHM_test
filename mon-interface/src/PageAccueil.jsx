@@ -1,7 +1,7 @@
 import React from 'react';
 import eolienne from './dessin/0-eolienne.svg';
 
-function PageAccueil({ vitesseVent, heure }) {
+function PageAccueil({ vitesseVent, heure, p_total, p_micro, p_prod }) {
   
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '10px', flex: 1, boxSizing: 'border-box' }}>

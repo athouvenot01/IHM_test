@@ -49,25 +49,6 @@ function PageRiceCooker() {
           <h3 style={{ margin: 0, fontSize: '35px', color: '#636363', fontWeight: 'bold' }}>Temps d'utilisation disponible</h3>
         </div>
 
-        {/* Ligne : Maintien au chaud */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px 15px',
-          borderRadius: '12px',
-          // Effet visuel : la ligne s'illumine en orange discret si le mode est actif
-          backgroundColor: etatRiceCooker === 1 ? '#fff9f3' : 'transparent',
-          border: etatRiceCooker === 1 ? '1px solid #f4dfc8' : '1px solid transparent'
-        }}>
-          <p style={{ margin: 0, fontSize: '33px', fontWeight:' bold', color: etatRiceCooker === 1 ? '#e67224' : '#0d0d0d' }}>
-            Maintien au chaud
-          </p>
-          <p style={{ margin: 0, fontSize: '40px', fontWeight: 'bold', color: etatRiceCooker === 1 ? '#e67224' : '#9e4728' }}>
-            {tempsMaintien}
-          </p>
-        </div>
-
         {/* Ligne : Cuisson */}
         <div style={{
           display: 'flex',
@@ -84,6 +65,25 @@ function PageRiceCooker() {
           </p>
           <p style={{ margin: 0, fontSize: '40px', fontWeight: 'bold', color: etatRiceCooker === 2 ? '#e67224' : '#9e4728' }}>
             {tempsCuisson}
+          </p>
+        </div>
+
+        {/* Ligne : Maintien au chaud */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px 15px',
+          borderRadius: '12px',
+          // Effet visuel : la ligne s'illumine en orange discret si le mode est actif
+          backgroundColor: etatRiceCooker === 1 ? '#fff9f3' : 'transparent',
+          border: etatRiceCooker === 1 ? '1px solid #f4dfc8' : '1px solid transparent'
+        }}>
+          <p style={{ margin: 0, fontSize: '33px', fontWeight:' bold', color: etatRiceCooker === 1 ? '#e67224' : '#0d0d0d' }}>
+            Maintien au chaud
+          </p>
+          <p style={{ margin: 0, fontSize: '40px', fontWeight: 'bold', color: etatRiceCooker === 1 ? '#e67224' : '#9e4728' }}>
+            {tempsMaintien}
           </p>
         </div>
 
