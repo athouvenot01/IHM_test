@@ -1,17 +1,17 @@
-function PageRiceCooker() {
+function PageRiceCooker({ etatRiceCooker, puissanceConso, tps_cuisson_min, tps_maintien_min }) {
   
-  const etatRiceCooker = 1; 
   const estAllume = etatRiceCooker !== 0;
 
-  let puissanceConso = "0 W";
-  let tempsMaintien = "02 h 15";
-  let tempsCuisson = "00 h 18";
+  // Formatage des minutes en hh h mm
+  const formatTemps = (minutesT) => {
+    if (minutesT == null || isNaN(minutesT)) return "00 h 00";
+    const h = Math.floor(minutesT / 60).toString().padStart(2, '0');
+    const m = (minutesT % 60).toString().padStart(2, '0');
+    return `${h} h ${m}`;
+  };
 
-  if (etatRiceCooker === 1) {
-    puissanceConso = "35 W";
-  } else if (etatRiceCooker === 2) {
-    puissanceConso = "450 W";
-  }
+  const tempsMaintien = formatTemps(tps_maintien_min);
+  const tempsCuisson = formatTemps(tps_cuisson_min);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '15px', flex: 1, boxSizing: 'border-box' }}>
@@ -27,7 +27,7 @@ function PageRiceCooker() {
       }}>
         <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation actuelle :</h2>
         <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: estAllume ? '#e67224' : '#9e4728' }}>
-          {puissanceConso}
+          {puissanceConso} W
         </p>
       </div>
 

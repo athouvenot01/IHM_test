@@ -21,12 +21,23 @@ function App() {
     tension: 0, puissance: 0, autonomie: 0, consoUSB: 0,
     vent: '--',
     v_frigo: 0, a_frigo: 0, p_frigo: 0, frigo: 0,
-    v_rice: 0, a_rice: 0, p_rice: 0, rice: 0
+    v_rice: 0, a_rice: 0, p_rice: 0, rice: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
+    p_micro: 0, p_usb_b: 0, p_usb_c: 0, p_leds: 0, p_total: 0
   });
 
   // ****************** GESTION NODE-RED ******************
   useEffect(() => {
-    uibuilder.start();
+    // FIX: Contournement du bug aléatoire (page blanche) uibuilder v7.6.2 en prod
+    // causé par un uibuilder-webroot à undefined lors des requêtes HEAD.
+    if (uibuilder.httpHeaders && typeof uibuilder.httpHeaders['uibuilder-webroot'] === 'undefined') {
+      uibuilder.httpHeaders['uibuilder-webroot'] = "";
+    }
+
+    try {
+      uibuilder.start();
+    } catch (e) {
+      console.warn("Erreur au démarrage de uibuilder:", e);
+    }
 
       uibuilder.onChange('ioConnected', (estConnecte) => {
       if (estConnecte) {
@@ -50,11 +61,29 @@ function App() {
           v_frigo: payload.tension, a_frigo: payload.courant, p_frigo: payload.puissance, frigo: payload.etat
         }));
       }
-
+      // Mise à jour : réception des données du rice cooker (état, consommation, temps de cuisson/maintien) pour la page "Rice Cooker"
       if (payload.id === "rice_cooker") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_rice: payload.tension, a_rice: payload.courant, p_rice: payload.puissance, rice: payload.etat
+          v_rice: payload.tension, 
+          a_rice: payload.courant, 
+          p_rice: payload.puissance, 
+          rice: payload.etat,
+          tps_cuisson_min: payload.tps_cuisson_min,
+          tps_maintien_min: payload.tps_maintien_min
+        }));
+      }
+      // Ajout : réception des données de consommation pour la page "Conso Actuelle"
+      if (payload.id === "bilan_conso") {
+        setMesures((anciennes) => ({
+          ...anciennes,
+          p_total: payload.total || 0,
+          p_rice: payload.details?.RiceCooker ?? anciennes.p_rice,
+          p_usb_c: payload.details?.['USB-C'] ?? anciennes.p_usb_c,
+          p_frigo: payload.details?.FRIGO ?? anciennes.p_frigo,
+          p_leds: payload.details?.LEDS ?? anciennes.p_leds,
+          p_usb_b: payload.details?.['USB-B'] ?? anciennes.p_usb_b,
+          p_micro: payload.details?.microcontroleur ?? anciennes.p_micro
         }));
       }
 
@@ -203,7 +232,12 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Rice Cooker</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <PageRiceCooker/>
+                <PageRiceCooker 
+                  etatRiceCooker={mesures.rice} 
+                  puissanceConso={mesures.p_rice} 
+                  tps_cuisson_min={mesures.tps_cuisson_min} 
+                  tps_maintien_min={mesures.tps_maintien_min} 
+                />
               </div>
             </section>
           )}
@@ -212,7 +246,16 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Consommation Actuelle</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <ConsoActuelle_VU p_micro={10} p_rice={100} p_usb_b={25} p_usb_c={30} p_frigo={75} p_leds={17} p_total={257} p_max={300} />
+                <ConsoActuelle_VU 
+                  p_micro={mesures.p_micro} 
+                  p_rice={mesures.p_rice} 
+                  p_usb_b={mesures.p_usb_b} 
+                  p_usb_c={mesures.p_usb_c} 
+                  p_frigo={mesures.p_frigo} 
+                  p_leds={mesures.p_leds} 
+                  p_total={mesures.p_total} 
+                  p_max={300} 
+                />
               </div>
             </section>
           )}
