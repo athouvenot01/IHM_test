@@ -35,13 +35,16 @@ function ConsoActuelle_VU({p_micro, p_rice, p_usb_b, p_usb_c, p_frigo, p_leds, p
         display: 'grid', 
         gridTemplateColumns: '4fr 4fr', 
         gap: '10px', 
-        flex: 1 
+        flex: 1 ,
+        minHeight: 0
       }}>
         
         {/* --- BLOC GAUCHE : Diagramme Camembert --- */}
         <div style={{ ...styleBloc, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{
-            height: '100%', 
+            height: '90%', 
+            maxWidth: '350px',
+            maxHeight: '100%',
             aspectRatio: '1 / 1',
             borderRadius: '50%',
             border: '2px solid #9e4728',
