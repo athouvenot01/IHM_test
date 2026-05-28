@@ -223,7 +223,7 @@ function App() {
                 <BoutonLED name="Cuisine" status={etatLampes.kuisine} auClic={() => basculerLampe('kuisine')} />
                 <BoutonLED name="Salon" status={etatLampes.saloon} auClic={() => basculerLampe('saloon')} />
                 <BoutonLED name="Toilettes" status={etatLampes.pq} auClic={() => basculerLampe('pq')} />
-                <BoutonLED name="Livre" status={etatLampes.livre} auClic={() => basculerLampe('livre')} />
+                <BoutonLED name="Coin Lecture" status={etatLampes.livre} auClic={() => basculerLampe('livre')} />
               </div>
             </section>
           )}
