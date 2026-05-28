@@ -230,7 +230,7 @@ function App() {
 
           {page === 2 && (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-              <h1>Rice Cooker bonjour</h1>
+              <h1>Rice Cooker</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
                 <PageRiceCooker 
                   etatRiceCooker={mesures.rice} 
