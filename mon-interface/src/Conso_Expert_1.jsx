@@ -1,123 +1,89 @@
-function PageRiceCooker({ etatRiceCooker, puissanceConso, tps_cuisson_min, tps_maintien_min }) {
-  
-  const estAllume = etatRiceCooker !== 0;
+import React from 'react';
+import BoutonEquipement from './BoutonEquipement';
 
-  // Formatage des minutes en hh h mm
-  const formatTemps = (minutesT) => {
-    if (minutesT == null || isNaN(minutesT)) return "00 h 00";
-    const h = Math.floor(minutesT / 60).toString().padStart(2, '0');
-    const m = (minutesT % 60).toString().padStart(2, '0');
-    return `${h} h ${m}`;
+// On passe toutes les données en paramètres depuis App.js
+function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerEquipement }) {
+  
+  const styleTitreColonne = {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: '24px',
+    color: '#9e4728', // Marron/Rouge
+    fontWeight: 'bold',
+    margin: 0
   };
 
-  const tempsMaintien = formatTemps(tps_maintien_min);
-  const tempsCuisson = formatTemps(tps_cuisson_min);
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '15px', flex: 1, boxSizing: 'border-box' }}>
-      
-      {/* --- SECTION DU HAUT : Consommation --- */}
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100%', 
+      width: '100%', 
+      gap: '20px', 
+      padding: '20px',
+      boxSizing: 'border-box',
+      backgroundColor: '#ffffff',
+      borderRadius: '20px',
+      border: '1px solid #f4dfc8'
+    }}>
+
+      {/* --- EN-TÊTE DU TABLEAU --- */}
       <div style={{ 
-        ...styleBloc, 
-        padding: '15px 50px', 
         display: 'flex', 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
+        padding: '0 25px', 
+        marginBottom: '-10px' // Rapproche les titres des boîtes
       }}>
-        <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation actuelle :</h2>
-        <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: estAllume ? '#e67224' : '#9e4728' }}>
-          {puissanceConso} W
-        </p>
+        <p style={{ ...styleTitreColonne, textAlign: 'left' }}>Équipements</p>
+        <p style={styleTitreColonne}>Tension</p>
+        <p style={styleTitreColonne}>Courant</p>
+        <p style={styleTitreColonne}>Puissance</p>
+        <p style={{ width: '120px', textAlign: 'center', margin: 0, fontSize: '24px', color: '#9e4728', fontWeight: 'bold' }}>État</p>
       </div>
 
-      {/* --- SECTION DU MILIEU : Temps d'utilisation disponible (Ton Tableau) --- */}
-      <div style={{ 
-        ...styleBloc, 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        justifyContent: 'space-around', 
-        padding: '10px 15px',
-        width: '90%',
-        alignSelf: 'center',
-      }}>
+      {/* --- LES LIGNES --- */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
         
-        {/* En-tête du tableau */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f4dfc8', paddingBottom: '10px' }}>
-          <h3 style={{ margin: 0, fontSize: '35px', color: '#636363', fontWeight: 'bold' }}>État</h3>
-          <h3 style={{ margin: 0, fontSize: '35px', color: '#636363', fontWeight: 'bold' }}>Temps d'utilisation disponible</h3>
-        </div>
+        <BoutonEquipement
+          nom="USB-C" 
+          tension={mesures.v_usb_c} 
+          courant={mesures.a_usb_c} 
+          puissance={mesures.p_usb_c} 
+          etat={mesures.usb_c} 
+          auClic={() => basculerEquipement('usb_c')} 
+        />
 
-        {/* Ligne : Cuisson */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px 15px',
-          borderRadius: '12px',
-          // Effet visuel : la ligne s'illumine si la cuisson est active
-          backgroundColor: etatRiceCooker === 2 ? '#fff9f3' : 'transparent',
-          border: etatRiceCooker === 2 ? '1px solid #f4dfc8' : '1px solid transparent'
-        }}>
-          <p style={{ margin: 0, fontSize: '33px', fontWeight: 'bold', color: etatRiceCooker === 2 ? '#e67224' : '#0d0d0d' }}>
-            Cuisson
-          </p>
-          <p style={{ margin: 0, fontSize: '40px', fontWeight: 'bold', color: etatRiceCooker === 2 ? '#e67224' : '#9e4728' }}>
-            {tempsCuisson}
-          </p>
-        </div>
+        {/* Exemple avec tes LEDs. On additionne les puissances si tu les as, sinon on met -- */}
+        <BoutonEquipement
+          nom="LEDS" 
+          tension={mesures.v_leds} 
+          courant={mesures.a_leds} 
+          puissance={mesures.p_leds} 
+          // Si au moins une lampe est allumée, on considère l'ensemble "ON"
+          etat={(etatLampes.kuisine === 'ON' || etatLampes.saloon === 'ON' || etatLampes.pq === 'ON' || etatLampes.livre === 'ON') ? 'ON' : 'OFF'} 
+          auClic={() => basculerLampe('kuisine')}
+        />
 
-        {/* Ligne : Maintien au chaud */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px 15px',
-          borderRadius: '12px',
-          // Effet visuel : la ligne s'illumine en orange discret si le mode est actif
-          backgroundColor: etatRiceCooker === 1 ? '#fff9f3' : 'transparent',
-          border: etatRiceCooker === 1 ? '1px solid #f4dfc8' : '1px solid transparent'
-        }}>
-          <p style={{ margin: 0, fontSize: '33px', fontWeight:' bold', color: etatRiceCooker === 1 ? '#e67224' : '#0d0d0d' }}>
-            Maintien au chaud
-          </p>
-          <p style={{ margin: 0, fontSize: '40px', fontWeight: 'bold', color: etatRiceCooker === 1 ? '#e67224' : '#9e4728' }}>
-            {tempsMaintien}
-          </p>
-        </div>
+        <BoutonEquipement
+          nom="Frigo" 
+          tension={mesures.v_frigo} 
+          courant={mesures.a_frigo} 
+          puissance={mesures.p_frigo} 
+          etat={mesures.frigo} 
+          auClic={() => basculerEquipement('frigo')} 
+        />
+
+        <BoutonEquipement
+          nom="Rice Cooker" 
+          tension={mesures.v_rice} 
+          courant={mesures.a_rice} 
+          puissance={mesures.p_rice} 
+          etat={mesures.rice} 
+          auClic={() => basculerEquipement('rice')} 
+        />
 
       </div>
-
-      {/* --- SECTION DU BAS : État du Rice Cooker --- */}
-      <div style={{ 
-        ...styleBloc, 
-        padding: '15px 50px', 
-        display: 'flex', 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
-      }}>
-        <h2 style={{ margin: 0, fontSize: '35px' }}>État :</h2>
-        <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: estAllume ? '#e67224' : '#9e4728' }}>
-          {estAllume ? 'Allumé' : 'Éteint'}
-        </p>
-      </div>
-
     </div>
   );
 }
 
-// --- STYLES INTERNES COHÉRENTS ---
-const styleBloc = {
-  backgroundColor: '#ffffff',
-  padding: '20px',
-  borderRadius: '20px',
-  border: '1px solid #f4dfc8',
-  boxSizing: 'border-box'
-};
-
-export default PageRiceCooker;
-
-
-// 9c4120 : marron foncé 
+export default Conso_Expert_1;

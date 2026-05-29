@@ -9,6 +9,7 @@ import PageAccueil from './PageAccueil';
 import ConsoActuelle_VU from './ConsoActuelle_VU';
 import PageRiceCooker from './PageRiceCooker';
 import Parametre from './Parametre';
+import Conso_Expert_1 from './Conso_Expert_1';
 
 import tournerTel from './dessin/0-tourner_tel.svg';
 
@@ -18,11 +19,14 @@ const barres = Array.from({ length: nb_pages });
 function App() {
 
   const [mesures, setMesures] = useState({
-    tension: 0, puissance: 0, autonomie: 0, consoUSB: 0,
+    tension: 0, autonomie: 0, consoUSB: 0,
     vent: '--',
+    v_rice: 0, a_rice: 0, p_rice: 0, rice_cooker: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
     v_frigo: 0, a_frigo: 0, p_frigo: 0, frigo: 0,
-    v_rice: 0, a_rice: 0, p_rice: 0, rice: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
-    p_micro: 0, p_usb_b: 0, p_usb_c: 0, p_leds: 0, p_total: 0
+    v_leds: 0, a_leds: 0, p_leds: 0,
+    v_usb_c: 0, a_usb_c: 0, p_usb_c: 0, usb_c: 0,
+    v_usb_b: 0, a_usb_b: 0, p_usb_b: 0, usb_b: 0,
+    p_micro: 0, p_total: 0
   });
 
   // ****************** GESTION NODE-RED ******************
@@ -58,7 +62,21 @@ function App() {
       if (payload.id === "frigo") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_frigo: payload.tension, a_frigo: payload.courant, p_frigo: payload.puissance, frigo: payload.etat
+          v_frigo: payload.tension, a_frigo: payload.courant, p_frigo: payload.p_total, frigo: payload.etat
+        }));
+      }
+
+      if (payload.id === "usb_c") {
+        setMesures((anciennes) => ({
+          ...anciennes,
+          v_usb_c: payload.tension, a_usb_c: payload.courant, p_usb_c: payload.p_total, usb_c: payload.etat
+        }));
+      }
+
+      if (payload.id === "usb_b") {
+        setMesures((anciennes) => ({
+          ...anciennes,
+          v_usb_b: payload.tension, a_usb_b: payload.courant, p_usb_b: payload.p_total, usb_b: payload.etat
         }));
       }
       // Mise à jour : réception des données du rice cooker (état, consommation, temps de cuisson/maintien) pour la page "Rice Cooker"
@@ -67,8 +85,8 @@ function App() {
           ...anciennes,
           v_rice: payload.tension, 
           a_rice: payload.courant, 
-          p_rice: payload.puissance, 
-          rice: payload.etat,
+          p_rice: payload.p_total, 
+          rice_cooker: payload.etat,
           tps_cuisson_min: payload.tps_cuisson_min,
           tps_maintien_min: payload.tps_maintien_min
         }));
@@ -143,6 +161,19 @@ function App() {
     uibuilder.send({
       topic: "commande_led", 
       payload: { led: nom, etat: nouvelEtat === 'ON' ? 1 : 0 }
+    });
+  };
+
+  // ****************** GESTION DES DELESTAGE ******************
+  const basculerEquipement = (nom) => {
+    const etatActuel = mesures[nom]; 
+    const nouvelEtat = (etatActuel === 1 || etatActuel === 'ON') ? 0 : 1;
+
+    setMesures((prev) => ({ ...prev, [nom]: nouvelEtat }));
+
+    uibuilder.send({
+      topic: "commande_equipement", 
+      payload: { appareil: nom, etat: nouvelEtat }
     });
   };
 
@@ -233,7 +264,7 @@ function App() {
               <h1>Rice Cooker</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
                 <PageRiceCooker 
-                  etatRiceCooker={mesures.rice} 
+                  etatRiceCooker={mesures.rice_cooker} 
                   puissanceConso={mesures.p_rice} 
                   tps_cuisson_min={mesures.tps_cuisson_min} 
                   tps_maintien_min={mesures.tps_maintien_min} 
@@ -254,16 +285,23 @@ function App() {
                   p_frigo={mesures.p_frigo} 
                   p_leds={mesures.p_leds} 
                   p_total={mesures.p_total} 
-                  p_max={300} 
+                  p_max={700} 
                 />
               </div>
             </section>
           )}
 
           {page === 4 && (
-            <section>
-              <h1>Historique</h1>
-              <p>Profil utilisateur</p>
+            <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+              <h1>Consommation Expert</h1>
+              <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
+                <Conso_Expert_1 
+                  mesures={mesures} 
+                  etatLampes={etatLampes} 
+                  basculerLampe={basculerLampe} 
+                  basculerEquipement={basculerEquipement} 
+                />
+              </div>
             </section>
           )}
 
