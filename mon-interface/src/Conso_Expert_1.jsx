@@ -2,7 +2,7 @@ import React from 'react';
 import BoutonEquipement from './BoutonEquipement';
 
 // On passe toutes les données en paramètres depuis App.js
-function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerEquipement }) {
+function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerToutesLesLampes, basculerEquipement }) {
   
   const styleTitreColonne = {
     flex: 1,
@@ -48,8 +48,8 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerEquipement
           tension={mesures.v_usb_c} 
           courant={mesures.a_usb_c} 
           puissance={mesures.p_usb_c} 
-          etat={mesures.usb_c} 
-          auClic={() => basculerEquipement('usb_c')} 
+          etat={mesures.usbC} 
+          auClic={() => basculerEquipement('usbC')} 
         />
 
         {/* Exemple avec tes LEDs. On additionne les puissances si tu les as, sinon on met -- */}
@@ -60,7 +60,7 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerEquipement
           puissance={mesures.p_leds} 
           // Si au moins une lampe est allumée, on considère l'ensemble "ON"
           etat={(etatLampes.kuisine === 'ON' || etatLampes.saloon === 'ON' || etatLampes.pq === 'ON' || etatLampes.livre === 'ON') ? 'ON' : 'OFF'} 
-          auClic={() => basculerLampe('kuisine')}
+          auClic={basculerToutesLesLampes}
         />
 
         <BoutonEquipement
@@ -77,8 +77,8 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerEquipement
           tension={mesures.v_rice} 
           courant={mesures.a_rice} 
           puissance={mesures.p_rice} 
-          etat={mesures.rice} 
-          auClic={() => basculerEquipement('rice')} 
+          etat={mesures.riceCooker} 
+          auClic={() => basculerEquipement('riceCooker')} 
         />
 
       </div>

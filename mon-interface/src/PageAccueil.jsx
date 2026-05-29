@@ -1,8 +1,18 @@
 import React from 'react';
 import eolienne from './dessin/0-eolienne.svg';
 
-function PageAccueil({ vitesseVent, heure, p_total, p_micro, p_prod }) {
-  
+function PageAccueil({ vitesseVent, heure, soc, autonomie_h, etatBatterie }) {
+  const socValeur = Math.max(0, Math.min(100, Number(soc) || 0));
+  const statutTexte = etatBatterie === 1 ? 'Charge' : 'Décharge';
+  const formatAutonomie = (h) => {
+    const total = Number(h);
+    if (Number.isNaN(total) || total <= 0) return '-- h --';
+    const heures = Math.floor(total);
+    const minutes = Math.round((total - heures) * 60);
+    return `${heures} h ${minutes.toString().padStart(2, '0')} min`;
+  };
+  const autonomieTexte = formatAutonomie(autonomie_h);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '10px', flex: 1, boxSizing: 'border-box' }}>
       
@@ -44,12 +54,12 @@ function PageAccueil({ vitesseVent, heure, p_total, p_micro, p_prod }) {
               
               {/* Conteneur pour l'heure. On utilise established orange style pour emphasis. */}
               <p style={{ marginLeft: '10px', fontSize: '35px', fontWeight: 'bold', color: '#e67224' }}>
-                75 %
+                {socValeur.toFixed(1)} %
               </p>
             </div>
             {/* Barre de progression */}
             <div style={{ width: '100%', height: '30px', backgroundColor: '#eee', borderRadius: '15px', marginTop: '5px', overflow: 'hidden', border: '1px solid #ddd' }}>
-              <div style={{ width: '75%', height: '100%', backgroundColor: '#e67224', transition: 'width 0.5s ease' }} />
+              <div style={{ width: `${socValeur}%`, height: '100%', backgroundColor: '#e67224', transition: 'width 0.5s ease' }} />
             </div>
 
             <div style={{ 
@@ -64,7 +74,7 @@ function PageAccueil({ vitesseVent, heure, p_total, p_micro, p_prod }) {
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%' }}>
                 <p>Statut :</p>
                 <p style={{fontWeight: 'bold', color: '#e67224', fontSize: '30px', alignSelf: 'center', marginTop: '5px' }}>
-                  Charge
+                  {statutTexte}
                 </p>
               </div>
 
@@ -72,7 +82,7 @@ function PageAccueil({ vitesseVent, heure, p_total, p_micro, p_prod }) {
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%'}}>
                 <p>Autonomie :</p>
                 <p style={{ fontWeight: 'bold', color: '#e67224', fontSize: '30px', alignSelf: 'center', marginTop: '5px' }}>
-                  1h 10min
+                  {autonomieTexte}
                 </p>
               </div>
             </div>

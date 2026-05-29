@@ -21,11 +21,12 @@ function App() {
   const [mesures, setMesures] = useState({
     tension: 0, autonomie: 0, consoUSB: 0,
     vent: '--',
-    v_rice: 0, a_rice: 0, p_rice: 0, rice_cooker: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
+    v_rice: 0, a_rice: 0, p_rice: 0, riceCooker: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
     v_frigo: 0, a_frigo: 0, p_frigo: 0, frigo: 0,
     v_leds: 0, a_leds: 0, p_leds: 0,
-    v_usb_c: 0, a_usb_c: 0, p_usb_c: 0, usb_c: 0,
+    v_usb_c: 0, a_usb_c: 0, p_usb_c: 0, usbC: 0,
     v_usb_b: 0, a_usb_b: 0, p_usb_b: 0, usb_b: 0,
+    soc: 0, autonomie_h: 0, etat_batterie: 0, alerte: 0,
     p_micro: 0, p_total: 0
   });
 
@@ -50,10 +51,20 @@ function App() {
     });
 
     uibuilder.onChange('msg', (nouveauMsg) => {
-      if (!nouveauMsg || !nouveauMsg.payload) return;
+      if (!nouveauMsg) return;
 
-      const payload = nouveauMsg.payload;
-      const topic = String(nouveauMsg.topic || '').toLowerCase().trim();
+      const unwrapPayload = (msg) => {
+        if (!msg) return null;
+        if (msg.payload && typeof msg.payload === 'object' && msg.payload !== msg) {
+          return unwrapPayload(msg.payload);
+        }
+        return msg;
+      };
+
+      const payload = unwrapPayload(nouveauMsg);
+      if (!payload) return;
+
+      const topic = String(nouveauMsg.topic || payload.topic || '').toLowerCase().trim();
 
       if (payload.id === "vent") {
         setMesures((anciennes) => ({ ...anciennes, vent: payload.vitesse }));
@@ -62,14 +73,20 @@ function App() {
       if (payload.id === "frigo") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_frigo: payload.tension, a_frigo: payload.courant, p_frigo: payload.p_total, frigo: payload.etat
+          v_frigo: payload.tension,
+          a_frigo: payload.courant,
+          p_frigo: payload.p_total ?? payload.puissance,
+          frigo: payload.etat
         }));
       }
 
       if (payload.id === "usb_c") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_usb_c: payload.tension, a_usb_c: payload.courant, p_usb_c: payload.p_total, usb_c: payload.etat
+          v_usb_c: payload.tension,
+          a_usb_c: payload.courant,
+          p_usb_c: payload.p_total ?? payload.puissance,
+          usbC: payload.etat
         }));
       }
 
@@ -85,8 +102,8 @@ function App() {
           ...anciennes,
           v_rice: payload.tension, 
           a_rice: payload.courant, 
-          p_rice: payload.p_total, 
-          rice_cooker: payload.etat,
+          p_rice: payload.p_total ?? payload.puissance,
+          riceCooker: payload.etat,
           tps_cuisson_min: payload.tps_cuisson_min,
           tps_maintien_min: payload.tps_maintien_min
         }));
@@ -105,8 +122,44 @@ function App() {
         }));
       }
 
+      if (payload.id === "batterie_globale") {
+        setMesures((anciennes) => ({
+          ...anciennes,
+          tension: payload.tension ?? anciennes.tension,
+          courant: payload.courant ?? anciennes.courant,
+          puissance: payload.puissance ?? anciennes.puissance,
+          soc: payload.soc ?? anciennes.soc,
+          autonomie_h: payload.autonomie_h ?? anciennes.autonomie_h,
+          etat_batterie: payload.etat ?? anciennes.etat_batterie,
+          alerte: payload.alerte ?? anciennes.alerte
+        }));
+      }
+
+      if (payload.id === "statut_relais_ihm") {
+        const relais = payload.relais || {};
+
+        setMesures((anciennes) => ({
+          ...anciennes,
+          riceCooker: relais.riceCooker ?? anciennes.riceCooker,
+          usbC: relais.usbC ?? anciennes.usbC,
+          frigo: relais.frigo ?? anciennes.frigo
+        }));
+      }
+
       if (payload.id === "eclairage") {
         const interrupteurs = payload.interrupteurs || {};
+        const mesuresEclairage = payload.mesures || {};
+        const relais = payload.relais || {};
+
+        setMesures((anciennes) => ({
+          ...anciennes,
+          v_leds: mesuresEclairage.tension ?? anciennes.v_leds,
+          a_leds: mesuresEclairage.courant ?? anciennes.a_leds,
+          p_leds: mesuresEclairage.puissance ?? anciennes.p_leds,
+          riceCooker: relais.riceCooker ?? anciennes.riceCooker,
+          usbC: relais.usbC ?? anciennes.usbC,
+          frigo: relais.frigo ?? anciennes.frigo
+        }));
         
         setEtatLampes((ancienEtat) => {
           const k_new = interrupteurs.kuisine == 1 ? 'ON' : 'OFF';
@@ -164,12 +217,33 @@ function App() {
     });
   };
 
+  const basculerToutesLesLampes = () => {
+    setEtatLampes((ancienEtat) => {
+      const estAllume = ancienEtat.kuisine === 'ON' || ancienEtat.saloon === 'ON' || ancienEtat.pq === 'ON' || ancienEtat.livre === 'ON';
+      const nouvelEtat = estAllume ? 'OFF' : 'ON';
+      const etatCommande = estAllume ? 0 : 1;
+      const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
+
+      nomsLampes.forEach((nom) => {
+        uibuilder.send({
+          topic: "commande_led",
+          payload: { led: nom, etat: etatCommande }
+        });
+      });
+
+      return {
+        kuisine: nouvelEtat,
+        saloon: nouvelEtat,
+        pq: nouvelEtat,
+        livre: nouvelEtat
+      };
+    });
+  };
+
   // ****************** GESTION DES DELESTAGE ******************
   const basculerEquipement = (nom) => {
     const etatActuel = mesures[nom]; 
     const nouvelEtat = (etatActuel === 1 || etatActuel === 'ON') ? 0 : 1;
-
-    setMesures((prev) => ({ ...prev, [nom]: nouvelEtat }));
 
     uibuilder.send({
       topic: "commande_equipement", 
@@ -242,7 +316,13 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Accueil</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <PageAccueil vitesseVent={mesures.vent} heure={heure} />
+                <PageAccueil 
+                vitesseVent={mesures.vent} 
+                heure={heure} 
+                soc={mesures.soc}
+                autonomie_h={mesures.autonomie_h}
+                etatBatterie={mesures.etat_batterie}
+              />
               </div>
             </section>
           )}
@@ -264,7 +344,7 @@ function App() {
               <h1>Rice Cooker</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
                 <PageRiceCooker 
-                  etatRiceCooker={mesures.rice_cooker} 
+                  etatRiceCooker={mesures.riceCooker} 
                   puissanceConso={mesures.p_rice} 
                   tps_cuisson_min={mesures.tps_cuisson_min} 
                   tps_maintien_min={mesures.tps_maintien_min} 
@@ -299,6 +379,7 @@ function App() {
                   mesures={mesures} 
                   etatLampes={etatLampes} 
                   basculerLampe={basculerLampe} 
+                  basculerToutesLesLampes={basculerToutesLesLampes}
                   basculerEquipement={basculerEquipement} 
                 />
               </div>
