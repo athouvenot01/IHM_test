@@ -1,17 +1,17 @@
 import React from 'react';
 import eolienne from './dessin/0-eolienne.svg';
 
-function PageAccueil({ vitesseVent, heure, soc, autonomie_h, etatBatterie }) {
+function PageAccueil({ vitesseVent, heure, soc, autonomieH, etatBatterie, consoGlobale, consoMicro, productionAlternateur }) {
   const socValeur = Math.max(0, Math.min(100, Number(soc) || 0));
   const statutTexte = etatBatterie === 1 ? 'Charge' : 'Décharge';
   const formatAutonomie = (h) => {
     const total = Number(h);
-    if (Number.isNaN(total) || total <= 0) return '-- h --';
+    if (Number.isNaN(total) || total <= 0) return '0 h 00 min';
     const heures = Math.floor(total);
     const minutes = Math.round((total - heures) * 60);
     return `${heures} h ${minutes.toString().padStart(2, '0')} min`;
   };
-  const autonomieTexte = formatAutonomie(autonomie_h);
+  const autonomieTexte = formatAutonomie(autonomieH);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', gap: '10px', flex: 1, boxSizing: 'border-box' }}>
@@ -40,9 +40,9 @@ function PageAccueil({ vitesseVent, heure, soc, autonomie_h, etatBatterie }) {
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <p>Consommation générale : </p>
-                <p style={{...styleValeur, marginLeft: '20px', marginBottom: '15px' }}>-- W</p>
+                <p style={{...styleValeur, marginLeft: '20px', marginBottom: '15px' }}>{Number(consoGlobale) || 0} W</p>
                 <p>Consommation continue : </p>
-                <p style={{...styleValeur, marginLeft: '20px' }}>-- W</p>
+                <p style={{...styleValeur, marginLeft: '20px' }}>{Number(consoMicro).toFixed(1)} W</p>
               </div>
             </div>
           </div>
@@ -101,9 +101,9 @@ function PageAccueil({ vitesseVent, heure, soc, autonomie_h, etatBatterie }) {
           }}>
             <div>
               <p>Vent :</p>
-              <p style={styleValeur}>{vitesseVent} km/h</p>
+              <p style={styleValeur}>{vitesseVent === '--' ? 0 : vitesseVent} km/h</p>
               <p style={{ marginTop: '15px' }}>Production :</p>
-              <p style={{...styleValeur}}>-- W</p>
+              <p style={{...styleValeur}}>{Number(productionAlternateur) || 0} W</p>
             </div>
 
             <img 

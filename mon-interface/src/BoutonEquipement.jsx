@@ -54,13 +54,13 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
       <div style={styleLabel}>{nom}</div>
 
       {/* 2. Tension */}
-      <div style={styleCellule}>{tension > 0 ? `${tension.toFixed(1)} V` : '-- V'}</div>
+      <div style={styleCellule}>{tension > 0 ? `${tension.toFixed(1)} V` : '0 V'}</div>
 
       {/* 3. Courant */}
-      <div style={styleCellule}>{courant > 0 ? `${courant.toFixed(2)} A` : '-- A'}</div>
+      <div style={styleCellule}>{courant > 0 ? `${courant.toFixed(2)} A` : '0 A'}</div>
 
       {/* 4. Puissance */}
-      <div style={styleCellule}>{puissance > 0 ? `${puissance.toFixed(0)} W` : '-- W'}</div>
+      <div style={styleCellule}>{puissance > 0 ? `${puissance.toFixed(0)} W` : '0 W'}</div>
 
       {/* 5. Le faux interrupteur ON/OFF */}
       <div style={{ 

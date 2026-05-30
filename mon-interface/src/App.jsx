@@ -21,13 +21,13 @@ function App() {
   const [mesures, setMesures] = useState({
     tension: 0, autonomie: 0, consoUSB: 0,
     vent: '--',
-    v_rice: 0, a_rice: 0, p_rice: 0, riceCooker: 0, tps_cuisson_min: 0, tps_maintien_min: 0,
-    v_frigo: 0, a_frigo: 0, p_frigo: 0, frigo: 0,
-    v_leds: 0, a_leds: 0, p_leds: 0,
-    v_usb_c: 0, a_usb_c: 0, p_usb_c: 0, usbC: 0,
-    v_usb_b: 0, a_usb_b: 0, p_usb_b: 0, usb_b: 0,
-    soc: 0, autonomie_h: 0, etat_batterie: 0, alerte: 0,
-    p_micro: 0, p_total: 0
+    vRice: 0, aRice: 0, pRice: 0, riceCooker: 0, tpsCuissonMin: 0, tpsMaintienMin: 0,
+    vFrigo: 0, aFrigo: 0, pFrigo: 0, frigo: 0,
+    vLeds: 0, aLeds: 0, pLeds: 0,
+    vUsbC: 0, aUsbC: 0, pUsbC: 0, usbC: 0,
+    vUsbB: 0, aUsbB: 0, pUsbB: 0, usbB: 0,
+    soc: 0, autonomieH: 0, etatBatterie: 0, alerte: 0,
+    pMicro: 0, pTotal: 0, pAlternateur: 0
   });
 
   // ****************** GESTION NODE-RED ******************
@@ -46,7 +46,7 @@ function App() {
 
       uibuilder.onChange('ioConnected', (estConnecte) => {
       if (estConnecte) {
-        uibuilder.send({ topic: "fetch_initial_state", payload: {} });
+        uibuilder.send({ topic: "fetchInitialState", payload: {} });
       }
     });
 
@@ -70,72 +70,76 @@ function App() {
         setMesures((anciennes) => ({ ...anciennes, vent: payload.vitesse }));
       }
 
+      if (payload.id === "alternateur") {
+        setMesures((anciennes) => ({ ...anciennes, p_alternateur: payload.puissance ?? 0 }));
+      }
+
       if (payload.id === "frigo") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_frigo: payload.tension,
-          a_frigo: payload.courant,
-          p_frigo: payload.p_total ?? payload.puissance,
+          vFrigo: payload.tension,
+          aFrigo: payload.courant,
+          pFrigo: payload.puissance,
           frigo: payload.etat
         }));
       }
 
-      if (payload.id === "usb_c") {
+      if (payload.id === "usbC") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_usb_c: payload.tension,
-          a_usb_c: payload.courant,
-          p_usb_c: payload.p_total ?? payload.puissance,
+          vUsbC: payload.tension,
+          aUsbC: payload.courant,
+          pUsbC: payload.puissance,
           usbC: payload.etat
         }));
       }
 
-      if (payload.id === "usb_b") {
+      if (payload.id === "usbB") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_usb_b: payload.tension, a_usb_b: payload.courant, p_usb_b: payload.p_total, usb_b: payload.etat
+          vUsbB: payload.tension, aUsbB: payload.courant, pUsbB: payload.puissance, usbB: payload.etat
         }));
       }
       // Mise à jour : réception des données du rice cooker (état, consommation, temps de cuisson/maintien) pour la page "Rice Cooker"
-      if (payload.id === "rice_cooker") {
+      if (payload.id === "riceCooker") {
         setMesures((anciennes) => ({
           ...anciennes,
-          v_rice: payload.tension, 
-          a_rice: payload.courant, 
-          p_rice: payload.p_total ?? payload.puissance,
+          vRice: payload.tension,
+          aRice: payload.courant,
+          pRice: payload.puissance,
           riceCooker: payload.etat,
-          tps_cuisson_min: payload.tps_cuisson_min,
-          tps_maintien_min: payload.tps_maintien_min
+          tpsCuissonMin: payload.tpsCuissonMin,
+          tpsMaintienMin: payload.tpsMaintienMin
         }));
       }
       // Ajout : réception des données de consommation pour la page "Conso Actuelle"
-      if (payload.id === "bilan_conso") {
+      if (payload.id === "bilanConso") {
         setMesures((anciennes) => ({
           ...anciennes,
-          p_total: payload.total || 0,
-          p_rice: payload.details?.RiceCooker ?? anciennes.p_rice,
-          p_usb_c: payload.details?.['USB-C'] ?? anciennes.p_usb_c,
-          p_frigo: payload.details?.FRIGO ?? anciennes.p_frigo,
-          p_leds: payload.details?.LEDS ?? anciennes.p_leds,
-          p_usb_b: payload.details?.['USB-B'] ?? anciennes.p_usb_b,
-          p_micro: payload.details?.microcontroleur ?? anciennes.p_micro
+          pTotal: payload.total || 0,
+          pRice: payload.details?.riceCooker ?? anciennes.pRice,
+          pUsbC: payload.details?.usbC ?? anciennes.pUsbC,
+          pFrigo: payload.details?.frigo ?? anciennes.pFrigo,
+          pLeds: payload.details?.leds ?? anciennes.pLeds,
+          pUsbB: payload.details?.usbB ?? anciennes.pUsbB,
+          pMicro: payload.details?.microControleur ?? anciennes.pMicro
         }));
       }
 
-      if (payload.id === "batterie_globale") {
+      if (payload.id === "batteriGlobale") {
         setMesures((anciennes) => ({
           ...anciennes,
           tension: payload.tension ?? anciennes.tension,
           courant: payload.courant ?? anciennes.courant,
           puissance: payload.puissance ?? anciennes.puissance,
           soc: payload.soc ?? anciennes.soc,
-          autonomie_h: payload.autonomie_h ?? anciennes.autonomie_h,
-          etat_batterie: payload.etat ?? anciennes.etat_batterie,
+          autonomieH: payload.autonomieH ?? anciennes.autonomieH,
+          etatBatterie: payload.etat ?? anciennes.etatBatterie,
           alerte: payload.alerte ?? anciennes.alerte
         }));
       }
 
-      if (payload.id === "statut_relais_ihm") {
+      if (payload.id === "statutRelaisIhm") {
         const relais = payload.relais || {};
 
         setMesures((anciennes) => ({
@@ -153,9 +157,9 @@ function App() {
 
         setMesures((anciennes) => ({
           ...anciennes,
-          v_leds: mesuresEclairage.tension ?? anciennes.v_leds,
-          a_leds: mesuresEclairage.courant ?? anciennes.a_leds,
-          p_leds: mesuresEclairage.puissance ?? anciennes.p_leds,
+          vLeds: mesuresEclairage.tension ?? anciennes.vLeds,
+          aLeds: mesuresEclairage.courant ?? anciennes.aLeds,
+          pLeds: mesuresEclairage.puissance ?? anciennes.pLeds,
           riceCooker: relais.riceCooker ?? anciennes.riceCooker,
           usbC: relais.usbC ?? anciennes.usbC,
           frigo: relais.frigo ?? anciennes.frigo
@@ -212,7 +216,7 @@ function App() {
     setEtatLampes((prev) => ({ ...prev, [nom]: nouvelEtat }));
 
     uibuilder.send({
-      topic: "commande_led", 
+      topic: "commandeLed",
       payload: { led: nom, etat: nouvelEtat === 'ON' ? 1 : 0 }
     });
   };
@@ -246,7 +250,7 @@ function App() {
     const nouvelEtat = (etatActuel === 1 || etatActuel === 'ON') ? 0 : 1;
 
     uibuilder.send({
-      topic: "commande_equipement", 
+      topic: "commandeEquipement",
       payload: { appareil: nom, etat: nouvelEtat }
     });
   };
@@ -316,12 +320,15 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Accueil</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <PageAccueil 
-                vitesseVent={mesures.vent} 
-                heure={heure} 
+                <PageAccueil
+                vitesseVent={mesures.vent}
+                heure={heure}
                 soc={mesures.soc}
-                autonomie_h={mesures.autonomie_h}
-                etatBatterie={mesures.etat_batterie}
+                autonomieH={mesures.autonomieH}
+                etatBatterie={mesures.etatBatterie}
+                consoGlobale={mesures.pTotal}
+                consoMicro={mesures.pMicro}
+                productionAlternateur={mesures.pAlternateur}
               />
               </div>
             </section>
@@ -343,11 +350,11 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Rice Cooker</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <PageRiceCooker 
-                  etatRiceCooker={mesures.riceCooker} 
-                  puissanceConso={mesures.p_rice} 
-                  tps_cuisson_min={mesures.tps_cuisson_min} 
-                  tps_maintien_min={mesures.tps_maintien_min} 
+                <PageRiceCooker
+                  etatRiceCooker={mesures.riceCooker}
+                  puissanceConso={mesures.pRice}
+                  tpsCuissonMin={mesures.tpsCuissonMin}
+                  tpsMaintienMin={mesures.tpsMaintienMin}
                 />
               </div>
             </section>
@@ -357,15 +364,15 @@ function App() {
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Consommation Actuelle</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <ConsoActuelle_VU 
-                  p_micro={mesures.p_micro} 
-                  p_rice={mesures.p_rice} 
-                  p_usb_b={mesures.p_usb_b} 
-                  p_usb_c={mesures.p_usb_c} 
-                  p_frigo={mesures.p_frigo} 
-                  p_leds={mesures.p_leds} 
-                  p_total={mesures.p_total} 
-                  p_max={700} 
+                <ConsoActuelle_VU
+                  pMicro={mesures.pMicro}
+                  pRice={mesures.pRice}
+                  pUsbB={mesures.pUsbB}
+                  pUsbC={mesures.pUsbC}
+                  pFrigo={mesures.pFrigo}
+                  pLeds={mesures.pLeds}
+                  pTotal={mesures.pTotal}
+                  pMax={700}
                 />
               </div>
             </section>

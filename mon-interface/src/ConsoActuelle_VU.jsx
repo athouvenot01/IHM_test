@@ -1,13 +1,20 @@
 import React from 'react';
 
-function ConsoActuelle_VU({p_micro, p_rice, p_usb_b, p_usb_c, p_frigo, p_leds, p_total, p_max}) {
-  
-  const prop_micro = (p_micro / p_max) * 100;
-  const prop_rice = (p_rice / p_max) * 100;
-  const prop_usb_b = (p_usb_b / p_max) * 100;
-  const prop_usb_c = (p_usb_c / p_max) * 100;
-  const prop_frigo = (p_frigo / p_max) * 100;
-  const prop_leds = (p_leds / p_max) * 100;
+function ConsoActuelle_VU({pMicro, pRice, pUsbB, pUsbC, pFrigo, pLeds, pTotal, pMax}) {
+
+  const pMicroVal = Number(pMicro) || 0;
+  const pRiceVal = Number(pRice) || 0;
+  const pUsbBVal = Number(pUsbB) || 0;
+  const pUsbCVal = Number(pUsbC) || 0;
+  const pFrigoVal = Number(pFrigo) || 0;
+  const pLedsVal = Number(pLeds) || 0;
+
+  const prop_micro = (pMicroVal / pMax) * 100;
+  const prop_rice = (pRiceVal / pMax) * 100;
+  const prop_usb_b = (pUsbBVal / pMax) * 100;
+  const prop_usb_c = (pUsbCVal / pMax) * 100;
+  const prop_frigo = (pFrigoVal / pMax) * 100;
+  const prop_leds = (pLedsVal / pMax) * 100;
   const prop_dispo = 100 - (prop_micro + prop_rice + prop_usb_b + prop_usb_c + prop_frigo + prop_leds);
 
   const s1 = prop_micro;
@@ -68,17 +75,17 @@ function ConsoActuelle_VU({p_micro, p_rice, p_usb_b, p_usb_c, p_frigo, p_leds, p
       </div>
 
       {/* --- SECTION DU BAS : Consommation Totale --- */}
-      <div style={{ 
-        ...styleBloc, 
-        padding: '15px 50px', 
-        display: 'flex', 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
+      <div style={{
+        ...styleBloc,
+        padding: '15px 50px',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
       }}>
         <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation Totale :</h2>
         <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: '#e67224' }}>
-          {p_total} W
+          {Number(pTotal) || 0} W
         </p>
       </div>
 

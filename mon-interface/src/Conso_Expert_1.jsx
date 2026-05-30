@@ -44,41 +44,40 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerToutesLesL
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
         
         <BoutonEquipement
-          nom="USB-C" 
-          tension={mesures.v_usb_c} 
-          courant={mesures.a_usb_c} 
-          puissance={mesures.p_usb_c} 
-          etat={mesures.usbC} 
-          auClic={() => basculerEquipement('usbC')} 
+          nom="USB-C"
+          tension={mesures.vUsbC}
+          courant={mesures.aUsbC}
+          puissance={mesures.pUsbC}
+          etat={mesures.usbC}
+          auClic={() => basculerEquipement('usbC')}
         />
 
         {/* Exemple avec tes LEDs. On additionne les puissances si tu les as, sinon on met -- */}
         <BoutonEquipement
-          nom="LEDS" 
-          tension={mesures.v_leds} 
-          courant={mesures.a_leds} 
-          puissance={mesures.p_leds} 
-          // Si au moins une lampe est allumée, on considère l'ensemble "ON"
-          etat={(etatLampes.kuisine === 'ON' || etatLampes.saloon === 'ON' || etatLampes.pq === 'ON' || etatLampes.livre === 'ON') ? 'ON' : 'OFF'} 
+          nom="LEDS"
+          tension={mesures.vLeds}
+          courant={mesures.aLeds}
+          puissance={mesures.pLeds}
+          etat={(etatLampes.kuisine === 'ON' || etatLampes.saloon === 'ON' || etatLampes.pq === 'ON' || etatLampes.livre === 'ON') ? 'ON' : 'OFF'}
           auClic={basculerToutesLesLampes}
         />
 
         <BoutonEquipement
-          nom="Frigo" 
-          tension={mesures.v_frigo} 
-          courant={mesures.a_frigo} 
-          puissance={mesures.p_frigo} 
-          etat={mesures.frigo} 
-          auClic={() => basculerEquipement('frigo')} 
+          nom="Frigo"
+          tension={mesures.vFrigo}
+          courant={mesures.aFrigo}
+          puissance={mesures.pFrigo}
+          etat={mesures.frigo}
+          auClic={() => basculerEquipement('frigo')}
         />
 
         <BoutonEquipement
-          nom="Rice Cooker" 
-          tension={mesures.v_rice} 
-          courant={mesures.a_rice} 
-          puissance={mesures.p_rice} 
-          etat={mesures.riceCooker} 
-          auClic={() => basculerEquipement('riceCooker')} 
+          nom="Rice Cooker"
+          tension={mesures.vRice}
+          courant={mesures.aRice}
+          puissance={mesures.pRice}
+          etat={mesures.riceCooker}
+          auClic={() => basculerEquipement('riceCooker')}
         />
 
       </div>
