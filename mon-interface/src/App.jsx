@@ -266,11 +266,13 @@ function App() {
 
     const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
     
-    nomsLampes.forEach((nom) => {
-      uibuilder.send({
-        topic: "commandeLed",
-        payload: { led: nom, etat: nouvelEtatChiffre } 
-      });
+    nomsLampes.forEach((nom, index) => {
+      setTimeout(() => {
+        uibuilder.send({
+          topic: "commandeLed",
+          payload: { led: nom, etat: nouvelEtatChiffre } 
+        });
+      }, index * 100); 
     });
   };
 
