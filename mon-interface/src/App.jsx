@@ -11,6 +11,7 @@ import PageRiceCooker from './PageRiceCooker';
 import ModalRiceCooker from './ModalRiceCooker';
 import Parametre from './Parametre';
 import Conso_Expert_1 from './Conso_Expert_1';
+import Conso_Expert_2 from './Conso_Expert_2';
 
 import tournerTel from './dessin/0-tourner_tel.svg';
 
@@ -20,7 +21,6 @@ const barres = Array.from({ length: nb_pages });
 function App() {
 
   const [mesures, setMesures] = useState({
-    tension: 0, autonomie: 0, consoUSB: 0,
     vent: '--',
     vRice: 0, aRice: 0, pRice: 0, riceCooker: 0, tpsCuissonMin: 0, tpsMaintienMin: 0,
     maintienActif: false, maintienFinTs: 0,
@@ -28,8 +28,10 @@ function App() {
     vLeds: 0, aLeds: 0, pLeds: 0,
     vUsbC: 0, aUsbC: 0, pUsbC: 0, usbC: 0,
     vUsbB: 0, aUsbB: 0, pUsbB: 0, usbB: 0,
-    soc: 0, autonomieH: 0, etatBatterie: 0, alerte: 0,
-    pMicro: 0, pTotal: 0, pAlternateur: 0
+    vMicro: 0, aMicro: 0, pMicro: 0,
+    vBatterie: 0, aBatterie: 0, pBatterie: 0, soc: 0, autonomieH: 0, etatBatterie: 0, alerte: 0,
+    vAtlernateur: 0, aAlternateur: 0, pAlternateur: 0,
+    pTotal: 0
   });
 
   // Pop-up Rice Cooker (allumage hotte / cuisson refusée)
@@ -105,6 +107,14 @@ function App() {
           vUsbB: payload.tension, aUsbB: payload.courant, pUsbB: payload.puissance, usbB: payload.etat
         }));
       }
+
+      if (payload.id === "microControleur") {
+        setMesures((anciennes) => ({
+          ...anciennes,
+          vMicro: payload.tension, aMicro: payload.courant, pMicro: payload.puissance
+        }));
+      }
+
       // Mise à jour : réception des données du rice cooker (état, consommation, temps de cuisson/maintien) pour la page "Rice Cooker"
       if (payload.id === "riceCooker") {
         setMesures((anciennes) => ({
@@ -146,9 +156,9 @@ function App() {
       if (payload.id === "batteriGlobale") {
         setMesures((anciennes) => ({
           ...anciennes,
-          tension: payload.tension ?? anciennes.tension,
-          courant: payload.courant ?? anciennes.courant,
-          puissance: payload.puissance ?? anciennes.puissance,
+          vBatterie: payload.tension ?? anciennes.tension,
+          aBatterie: payload.courant ?? anciennes.courant,
+          pBatterie: payload.puissance ?? anciennes.puissance,
           soc: payload.soc ?? anciennes.soc,
           autonomieH: payload.autonomieH ?? anciennes.autonomieH,
           etatBatterie: payload.etat ?? anciennes.etatBatterie,
@@ -379,6 +389,16 @@ function App() {
           )}
 
           {page === 3 && (
+            modeUtilisateur === 'expert' ? (
+              <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+                <h1>Consommation Expert</h1>
+                <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
+                  <Conso_Expert_2 
+                    mesures={mesures}
+                  />
+                </div>
+              </section>
+            ) : (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Consommation Actuelle</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
@@ -394,6 +414,7 @@ function App() {
                 />
               </div>
             </section>
+            )
           )}
 
           {page === 4 && (
