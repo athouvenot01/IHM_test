@@ -235,7 +235,6 @@ function App() {
   const [etatLampes, setEtatLampes] = useState({
     kuisine: 'OFF', saloon: 'OFF', pq: 'OFF', livre: 'OFF'
   });
-  const [toutAllume, setToutAllume] = useState(false);
 
   const basculerLampe = (nom) => {
     const etatActuel = etatLampes[nom];
@@ -250,23 +249,29 @@ function App() {
   };
 
   const basculerToutesLesLampes = () => {
-    const nouvelEtat = !toutAllume;
-    const etat = nouvelEtat ? 1 : 0;
-    const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
+    setEtatLampes((ancienEtat) => {
+      
+      const auMoinsUneAllumee = ancienEtat.kuisine === 'ON' || 
+                                ancienEtat.saloon === 'ON' || 
+                                ancienEtat.pq === 'ON' || 
+                                ancienEtat.livre === 'ON';
 
-    nomsLampes.forEach((nom) => {
-      uibuilder.send({
-        topic: "commandeLed",
-        payload: { led: nom, etat }
+      const nouvelEtatTexte = auMoinsUneAllumee ? 'OFF' : 'ON';
+
+      const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
+      nomsLampes.forEach((nom) => {
+        uibuilder.send({
+          topic: "commandeLed",
+          payload: { led: nom, etat: auMoinsUneAllumee ? 0 : 1 } 
+        });
       });
-    });
 
-    setToutAllume(nouvelEtat);
-    setEtatLampes({
-      kuisine: nouvelEtat ? 'ON' : 'OFF',
-      saloon: nouvelEtat ? 'ON' : 'OFF',
-      pq: nouvelEtat ? 'ON' : 'OFF',
-      livre: nouvelEtat ? 'ON' : 'OFF'
+      return {
+        kuisine: nouvelEtatTexte,
+        saloon: nouvelEtatTexte,
+        pq: nouvelEtatTexte,
+        livre: nouvelEtatTexte
+      };
     });
   };
 
