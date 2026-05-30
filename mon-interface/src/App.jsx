@@ -8,6 +8,7 @@ import FlecheNavigation from './FlecheNavigation';
 import PageAccueil from './PageAccueil';
 import ConsoActuelle_VU from './ConsoActuelle_VU';
 import PageRiceCooker from './PageRiceCooker';
+import ModalRiceCooker from './ModalRiceCooker';
 import Parametre from './Parametre';
 import Conso_Expert_1 from './Conso_Expert_1';
 import Conso_Expert_2 from './Conso_Expert_2';
@@ -22,6 +23,7 @@ function App() {
   const [mesures, setMesures] = useState({
     vent: '--',
     vRice: 0, aRice: 0, pRice: 0, riceCooker: 0, tpsCuissonMin: 0, tpsMaintienMin: 0,
+    maintienActif: false, maintienFinTs: 0,
     vFrigo: 0, aFrigo: 0, pFrigo: 0, frigo: 0,
     vLeds: 0, aLeds: 0, pLeds: 0,
     vUsbC: 0, aUsbC: 0, pUsbC: 0, usbC: 0,
@@ -31,6 +33,9 @@ function App() {
     vAtlernateur: 0, aAlternateur: 0, pAlternateur: 0,
     pTotal: 0
   });
+
+  // Pop-up Rice Cooker (allumage hotte / cuisson refusée)
+  const [popupRice, setPopupRice] = useState({ visible: false, type: 'hotte', message: '' });
 
   // ****************** GESTION NODE-RED ******************
   useEffect(() => {
@@ -119,8 +124,20 @@ function App() {
           pRice: payload.puissance,
           riceCooker: payload.etat,
           tpsCuissonMin: payload.tpsCuissonMin,
-          tpsMaintienMin: payload.tpsMaintienMin
+          tpsMaintienMin: payload.tpsMaintienMin,
+          // Décompte du maintien au chaud piloté par le back-end
+          maintienActif: payload.maintienActif ?? anciennes.maintienActif,
+          maintienFinTs: payload.maintienFinTs ?? anciennes.maintienFinTs
         }));
+      }
+
+      // Pop-up Rice Cooker : "ALLUMER_HOTTE" (cuisson autorisée) ou "CUISSON_REFUSEE"
+      if (payload.id === "riceCookerPopup") {
+        setPopupRice({
+          visible: true,
+          type: payload.action === "CUISSON_REFUSEE" ? 'refus' : 'hotte',
+          message: payload.message || ''
+        });
       }
       // Ajout : réception des données de consommation pour la page "Conso Actuelle"
       if (payload.id === "bilanConso") {
@@ -218,6 +235,7 @@ function App() {
   const [etatLampes, setEtatLampes] = useState({
     kuisine: 'OFF', saloon: 'OFF', pq: 'OFF', livre: 'OFF'
   });
+  const [toutAllume, setToutAllume] = useState(false);
 
   const basculerLampe = (nom) => {
     const etatActuel = etatLampes[nom];
@@ -232,25 +250,23 @@ function App() {
   };
 
   const basculerToutesLesLampes = () => {
-    setEtatLampes((ancienEtat) => {
-      const estAllume = ancienEtat.kuisine === 'ON' || ancienEtat.saloon === 'ON' || ancienEtat.pq === 'ON' || ancienEtat.livre === 'ON';
-      const nouvelEtat = estAllume ? 'OFF' : 'ON';
-      const etatCommande = estAllume ? 0 : 1;
-      const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
+    const nouvelEtat = !toutAllume;
+    const etat = nouvelEtat ? 1 : 0;
+    const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
 
-      nomsLampes.forEach((nom) => {
-        uibuilder.send({
-          topic: "commande_led",
-          payload: { led: nom, etat: etatCommande }
-        });
+    nomsLampes.forEach((nom) => {
+      uibuilder.send({
+        topic: "commandeLed",
+        payload: { led: nom, etat }
       });
+    });
 
-      return {
-        kuisine: nouvelEtat,
-        saloon: nouvelEtat,
-        pq: nouvelEtat,
-        livre: nouvelEtat
-      };
+    setToutAllume(nouvelEtat);
+    setEtatLampes({
+      kuisine: nouvelEtat ? 'ON' : 'OFF',
+      saloon: nouvelEtat ? 'ON' : 'OFF',
+      pq: nouvelEtat ? 'ON' : 'OFF',
+      livre: nouvelEtat ? 'ON' : 'OFF'
     });
   };
 
@@ -365,6 +381,8 @@ function App() {
                   puissanceConso={mesures.pRice}
                   tpsCuissonMin={mesures.tpsCuissonMin}
                   tpsMaintienMin={mesures.tpsMaintienMin}
+                  maintienActif={mesures.maintienActif}
+                  maintienFinTs={mesures.maintienFinTs}
                 />
               </div>
             </section>
@@ -440,6 +458,14 @@ function App() {
               transition: 'all 0.3s ease' }} />
           ))}
         </div>
+
+        {/* Pop-up Rice Cooker (allumer la hotte / cuisson refusée) */}
+        <ModalRiceCooker
+          visible={popupRice.visible}
+          type={popupRice.type}
+          message={popupRice.message}
+          onClose={() => setPopupRice((p) => ({ ...p, visible: false }))}
+        />
 
       </div>
     </div>

@@ -1,4 +1,6 @@
-function PageRiceCooker({ etatRiceCooker, puissanceConso, tpsCuissonMin, tpsMaintienMin }) {
+import { useState, useEffect } from 'react';
+
+function PageRiceCooker({ etatRiceCooker, puissanceConso, tpsCuissonMin, tpsMaintienMin, maintienActif, maintienFinTs }) {
 
   const estAllume = etatRiceCooker !== 0;
 
@@ -12,7 +14,37 @@ function PageRiceCooker({ etatRiceCooker, puissanceConso, tpsCuissonMin, tpsMain
     return `${h} h ${m}`;
   };
 
-  const tempsMaintien = formatTemps(tpsMaintienMin);
+  // --- DÉCOMPTE DU MAINTIEN AU CHAUD ---
+  // Le back-end (Node-RED) envoie un timestamp de fin (maintienFinTs).
+  // On recalcule le restant chaque seconde pour rester synchronisé avec le back-end.
+  const [restantSec, setRestantSec] = useState(0);
+
+  useEffect(() => {
+    if (!maintienActif || !maintienFinTs) {
+      setRestantSec(0);
+      return;
+    }
+
+    const calculer = () => {
+      const restant = Math.max(0, Math.round((maintienFinTs - Date.now()) / 1000));
+      setRestantSec(restant);
+    };
+
+    calculer();
+    const chrono = setInterval(calculer, 1000);
+    return () => clearInterval(chrono);
+  }, [maintienActif, maintienFinTs]);
+
+  const formatMinSec = (totalSec) => {
+    const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+    const s = (totalSec % 60).toString().padStart(2, '0');
+    return `${m} min ${s}`;
+  };
+
+  // En mode maintien actif on affiche le décompte vivant, sinon la valeur statique.
+  const tempsMaintien = (maintienActif && maintienFinTs)
+    ? formatMinSec(restantSec)
+    : formatTemps(tpsMaintienMin);
   const tempsCuisson = formatTemps(tpsCuissonMin);
 
   return (
