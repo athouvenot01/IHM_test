@@ -191,18 +191,31 @@ function Parametre({ date, heure, mode, setMode }) {
             </button>
 
             {/* --- CONTENU DE LA POPUP --- */}
-            <h1 style={{ color: '#0a0a0a', textAlign: 'center', marginBottom: '20px' }}>
-              Guide d'utilisation de l'interface
+            <h1 style={{ color: '#0a0a0a', textAlign: 'center', marginBottom: '20px', fontSize: '50px' }}>
+              Picogrid : Projet S8 - 2026 - INSA Strasbourg
             </h1>
             
-            <div style={{ overflowY: 'auto', flex: 1, paddingRight: '20px' }}>
-              <p style={{ fontSize: '24px', lineHeight: '1.5' }}>
-                Ici, tu peux écrire tout le texte que tu veux ! 
+            <div style={{ overflowY: 'auto', flex: 1, paddingRight: '20px', paddingTop: '10px' }}>
+              <p style={{ fontSize: '35px', lineHeight: '0.6' }}>
+                Den Guir Douae
                 <br /><br />
-                <strong>Mode Simple :</strong> Affiche une vue épurée et l'historique.<br />
-                <strong>Mode Expert :</strong> Débloque les tableaux de contrôle avancés pour le Frigo, le Rice Cooker, l'USB et permet le délestage manuel.
+                Louviot Théo
                 <br /><br />
-                Si le texte est trop long, une barre de défilement apparaîtra automatiquement grâce au <i>overflowY: 'auto'</i>.
+                Matter Martin
+                <br /><br />
+                Mineo Gaël
+                <br /><br />
+                Ozkan Timur
+                <br /><br />
+                Sonrel Mattéo
+                <br /><br />
+                Thouvenot Amandine
+                <br /><br />
+                Tika Zineb
+                <br /><br />
+                Troullier Laël
+                <br /><br />
+                Virquin Rudy
               </p>
             </div>
 

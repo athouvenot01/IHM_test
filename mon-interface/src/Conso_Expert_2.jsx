@@ -15,16 +15,18 @@ function Conso_Expert_2({ mesures }) {
   const styleCellule = {
     flex: 1, 
     textAlign: 'center',
-    fontSize: '28px',
+    fontSize: '32px',
     fontWeight: 'bold',
-    color: '#e67224' 
+    color: '#e67224', 
+    fontFamily: 'Montserrat, sans-serif'
   };
 
   const styleLabel = {
     ...styleCellule,
     textAlign: 'left',
     color: '#1a1a1a', 
-    fontSize: '32px'
+    fontSize: '30px',
+    fontFamily: 'Montserrat, sans-serif'
   };
 
   const styleLigne = {
@@ -42,9 +44,9 @@ function Conso_Expert_2({ mesures }) {
   const LigneInfo = ({ nom, tension, courant, puissance }) => (
     <div style={styleLigne}>
       <div style={styleLabel}>{nom}</div>
-      <div style={styleCellule}>{tension > 0 ? `${tension.toFixed(1)} V` : '-- V'}</div>
-      <div style={styleCellule}>{courant > 0 ? `${courant.toFixed(2)} A` : '-- A'}</div>
-      <div style={styleCellule}>{puissance > 0 ? `${puissance.toFixed(0)} W` : '-- W'}</div>
+      <div style={styleCellule}>{tension > 0 ? `${tension.toFixed(1)} V` : '0 V'}</div>
+      <div style={styleCellule}>{courant > 0 ? `${courant.toFixed(2)} A` : '0 A'}</div>
+      <div style={styleCellule}>{puissance > 0 ? `${puissance.toFixed(0)} W` : '0 W'}</div>
     </div>
   );
 

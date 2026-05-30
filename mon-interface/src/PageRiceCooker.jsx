@@ -90,7 +90,6 @@ function PageRiceCooker({ etatRiceCooker, puissanceConso, tpsCuissonMin, tpsMain
           alignItems: 'center',
           padding: '10px 15px',
           borderRadius: '12px',
-          // Effet visuel : la ligne s'illumine si la cuisson est active
           backgroundColor: etatRiceCooker === 2 ? '#fff9f3' : 'transparent',
           border: etatRiceCooker === 2 ? '1px solid #f4dfc8' : '1px solid transparent'
         }}>

@@ -5,18 +5,20 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
 
   // --- STYLES INTERNES ---
   const styleCellule = {
-    flex: 1, // Chaque colonne prend la même largeur
+    flex: 1, 
     textAlign: 'center',
-    fontSize: '28px',
+    fontSize: '32px',
     fontWeight: 'bold',
-    color: '#e67224' // Ton orange caractéristique
+    color: '#e67224',
+    fontFamily: 'Montserrat, sans-serif'
   };
 
   const styleLabel = {
     ...styleCellule,
     textAlign: 'left',
-    color: '#1a1a1a', // Gris foncé
-    fontSize: '32px'
+    color: '#1a1a1a', 
+    fontSize: '30px',
+    fontFamily: 'Montserrat, sans-serif'
   };
 
   const styleBoiteOnOff = {
