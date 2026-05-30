@@ -1,4 +1,8 @@
+import React, { useState } from 'react';
+
 function Parametre({ date, heure, mode, setMode }) {
+    const [popupOuverte, setPopupOuverte] = useState(false);
+  
     const mode_expert = mode === 'expert';
     const mode_simple = mode === 'simple';
 
@@ -125,19 +129,87 @@ function Parametre({ date, heure, mode, setMode }) {
         
       </div>
 
-      <div style={{ 
-        ...styleBloc, 
-        padding: '15px 50px', 
-        display: 'flex', 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
-      }}>
-        <h2 style={{ margin: 0, fontSize: '0.02%' }}>Pour plus d'informations</h2>
-        <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: '#9e4728' }}>
-          {date}
-        </p>
+      {/* --- BOUTON D'INFORMATIONS --- */}
+      <div 
+        onClick={() => setPopupOuverte(true)} // 👈 Ouvre la popup !
+        style={{ 
+          ...styleBloc, 
+          padding: '20px 50px', 
+          display: 'flex', 
+          justifyContent: 'center', // Centré
+          alignItems: 'center',
+          cursor: 'pointer', // Curseur main
+          backgroundColor: '#ffffff', // Légèrement teinté pour faire bouton
+          transition: 'transform 0.1s'
+        }}
+        onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+        onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        <h2 style={{ margin: 0, fontSize: '30px', color: '#9e4728' }}>ℹ️ Pour plus d'informations ℹ️</h2>
       </div>
+
+
+      {/* --- POPUP D'INFORMATIONS --- */}
+      {popupOuverte && (
+        <div style={{
+          position: 'fixed', // Reste par-dessus tout l'écran
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', // Le voile sombre
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999 // S'assure d'être au-dessus du reste
+        }}>
+          {/* La boîte blanche centrale */}
+          <div style={{
+            width: '80%', // 80% de la largeur
+            height: '80%', // 80% de la hauteur
+            backgroundColor: '#ffffff',
+            borderRadius: '20px',
+            padding: '40px',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0px 10px 40px rgba(0,0,0,0.5)',
+            position: 'relative'
+          }}>
+            
+            {/* BOUTON FERMER (La croix en haut à droite) */}
+            <button 
+              onClick={() => setPopupOuverte(false)} 
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                fontSize: '30px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#9e4728'
+              }}
+            >
+              ❌
+            </button>
+
+            {/* --- CONTENU DE LA POPUP --- */}
+            <h1 style={{ color: '#0a0a0a', textAlign: 'center', marginBottom: '20px' }}>
+              Guide d'utilisation de l'interface
+            </h1>
+            
+            <div style={{ overflowY: 'auto', flex: 1, paddingRight: '20px' }}>
+              <p style={{ fontSize: '24px', lineHeight: '1.5' }}>
+                Ici, tu peux écrire tout le texte que tu veux ! 
+                <br /><br />
+                <strong>Mode Simple :</strong> Affiche une vue épurée et l'historique.<br />
+                <strong>Mode Expert :</strong> Débloque les tableaux de contrôle avancés pour le Frigo, le Rice Cooker, l'USB et permet le délestage manuel.
+                <br /><br />
+                Si le texte est trop long, une barre de défilement apparaîtra automatiquement grâce au <i>overflowY: 'auto'</i>.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      )}
+
 
     </div>
   );
