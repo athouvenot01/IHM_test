@@ -41,7 +41,7 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerToutesLesL
       </div>
 
       {/* --- LES LIGNES --- */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto', flex: 1 }}>
         
         <BoutonEquipement
           nom="USB-C" 

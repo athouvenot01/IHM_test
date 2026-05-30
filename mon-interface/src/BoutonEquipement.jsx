@@ -35,13 +35,14 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
     <div 
       onClick={auClic}
       style={{
+        flex: 1,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: allume ? '#fefdf9' : 'white',
         border: '1px solid #f4dfc8',
         borderRadius: '15px',
-        padding: '15px 25px',
+        padding: '5px 10px',
         cursor: 'pointer',
         boxShadow: allume ? '0px 2px 15px -5px rgba(230, 114, 36, 0.2)' : 'none',
         transition: 'all 0.2s ease'

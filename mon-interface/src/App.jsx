@@ -372,18 +372,24 @@ function App() {
           )}
 
           {page === 4 && (
-            <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-              <h1>Consommation Expert</h1>
-              <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <Conso_Expert_1 
-                  mesures={mesures} 
-                  etatLampes={etatLampes} 
-                  basculerLampe={basculerLampe} 
-                  basculerToutesLesLampes={basculerToutesLesLampes}
-                  basculerEquipement={basculerEquipement} 
-                />
-              </div>
-            </section>
+            modeUtilisateur === 'expert' ? (
+              <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+                <h1>Consommation Expert</h1>
+                <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
+                  <Conso_Expert_1 
+                    mesures={mesures} 
+                    etatLampes={etatLampes} 
+                    basculerLampe={basculerLampe} 
+                    basculerToutesLesLampes={basculerToutesLesLampes}
+                    basculerEquipement={basculerEquipement} 
+                  />
+                </div>
+              </section>
+            ) : (
+              <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+                <h1>Mode Simple</h1>
+              </section>
+            )
           )}
 
           {page === 5 && (
