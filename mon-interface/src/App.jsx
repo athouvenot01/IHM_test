@@ -249,29 +249,28 @@ function App() {
   };
 
   const basculerToutesLesLampes = () => {
-    setEtatLampes((ancienEtat) => {
-      
-      const auMoinsUneAllumee = ancienEtat.kuisine === 'ON' || 
-                                ancienEtat.saloon === 'ON' || 
-                                ancienEtat.pq === 'ON' || 
-                                ancienEtat.livre === 'ON';
+    const auMoinsUneAllumee = etatLampes.kuisine === 'ON' || 
+                              etatLampes.saloon === 'ON' || 
+                              etatLampes.pq === 'ON' || 
+                              etatLampes.livre === 'ON';
 
-      const nouvelEtatTexte = auMoinsUneAllumee ? 'OFF' : 'ON';
+    const nouvelEtatTexte = auMoinsUneAllumee ? 'OFF' : 'ON';
+    const nouvelEtatChiffre = auMoinsUneAllumee ? 0 : 1;
 
-      const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
-      nomsLampes.forEach((nom) => {
-        uibuilder.send({
-          topic: "commandeLed",
-          payload: { led: nom, etat: auMoinsUneAllumee ? 0 : 1 } 
-        });
+    setEtatLampes({
+      kuisine: nouvelEtatTexte,
+      saloon: nouvelEtatTexte,
+      pq: nouvelEtatTexte,
+      livre: nouvelEtatTexte
+    });
+
+    const nomsLampes = ['kuisine', 'saloon', 'pq', 'livre'];
+    
+    nomsLampes.forEach((nom) => {
+      uibuilder.send({
+        topic: "commandeLed",
+        payload: { led: nom, etat: nouvelEtatChiffre } 
       });
-
-      return {
-        kuisine: nouvelEtatTexte,
-        saloon: nouvelEtatTexte,
-        pq: nouvelEtatTexte,
-        livre: nouvelEtatTexte
-      };
     });
   };
 
