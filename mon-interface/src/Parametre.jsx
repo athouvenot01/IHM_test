@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import iconeAgrandir from './dessin/0-agrandir.svg';
 
 function Parametre({ date, heure, mode, setMode }) {
     const [popupOuverte, setPopupOuverte] = useState(false);
@@ -145,7 +146,11 @@ function Parametre({ date, heure, mode, setMode }) {
         onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
         onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
-        <h2 style={{ margin: 0, fontSize: '30px', color: '#9e4728' }}>ℹ️ Pour plus d'informations ℹ️</h2>
+        <h2 style={{ margin: 0, fontSize: '30px', color: '#000000', display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <img src={iconeAgrandir} alt="Agrandir" style={{ width: '30px', height: '30px', marginRight: '20px' }} />
+          Pour plus d'informations
+          <img src={iconeAgrandir} alt="Agrandir" style={{ width: '30px', height: '30px', marginLeft: '20px' }} />
+        </h2>
       </div>
 
 
