@@ -78,6 +78,7 @@ function Conso_Expert_1({ mesures, etatLampes, basculerLampe, basculerToutesLesL
           puissance={mesures.pRice}
           etat={mesures.riceCooker}
           auClic={() => basculerEquipement('riceCooker')}
+          peutAllumer={false}
         />
 
       </div>

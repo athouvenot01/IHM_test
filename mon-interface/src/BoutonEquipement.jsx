@@ -1,7 +1,14 @@
 import React from 'react';
 
-function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
-  const allume = etat === 'ON' || etat === 1;
+function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic, peutAllumer = true }) {
+  const allume = etat === 'ON' || etat === 1 || etat === 2;
+
+  const gererClic = () => {
+    if (!peutAllumer && !allume) {
+      return; // Empêcher l'allumage si peutAllumer est false
+    }
+    auClic();
+  };
 
   // --- STYLES INTERNES ---
   const styleCellule = {
@@ -34,8 +41,8 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
   };
 
   return (
-    <div 
-      onClick={auClic}
+    <div
+      onClick={gererClic}
       style={{
         flex: 1,
         display: 'flex',
@@ -45,12 +52,17 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
         border: '1px solid #f4dfc8',
         borderRadius: '15px',
         padding: '5px 10px',
-        cursor: 'pointer',
+        cursor: peutAllumer || allume ? 'pointer' : 'not-allowed',
         boxShadow: allume ? '0px 2px 15px -5px rgba(230, 114, 36, 0.2)' : 'none',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        opacity: peutAllumer || allume ? 1 : 0.7
       }}
-      onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
-      onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      onMouseDown={(e) => {
+        if (peutAllumer || allume) e.currentTarget.style.transform = 'scale(0.98)';
+      }}
+      onMouseUp={(e) => {
+        if (peutAllumer || allume) e.currentTarget.style.transform = 'scale(1)';
+      }}
     >
       
       {/* 1. Nom de l'équipement */}
@@ -74,10 +86,11 @@ function BoutonEquipement({ nom, tension, courant, puissance, etat, auClic }) {
         width: '120px'
       }}>
         {/* Carré ON */}
-        <div style={{ 
-          ...styleBoiteOnOff, 
-          backgroundColor: allume ? '#f9d6a1' : 'transparent', // Orange si allumé, transparent sinon
-          color: allume ? '#9e4728' : '#a3a3a3' 
+        <div style={{
+          ...styleBoiteOnOff,
+          backgroundColor: allume ? '#f9d6a1' : !peutAllumer ? '#d3d3d3' : 'transparent',
+          color: allume ? '#9e4728' : !peutAllumer ? '#999999' : '#a3a3a3',
+          opacity: !peutAllumer && !allume ? 0.5 : 1
         }}>
           ON
         </div>
