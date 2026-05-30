@@ -44,9 +44,9 @@ function Conso_Expert_2({ mesures }) {
   const LigneInfo = ({ nom, tension, courant, puissance }) => (
     <div style={styleLigne}>
       <div style={styleLabel}>{nom}</div>
-      <div style={styleCellule}>{tension > 0 ? `${tension.toFixed(1)} V` : '0 V'}</div>
-      <div style={styleCellule}>{courant > 0 ? `${courant.toFixed(2)} A` : '0 A'}</div>
-      <div style={styleCellule}>{puissance > 0 ? `${puissance.toFixed(0)} W` : '0 W'}</div>
+      <div style={styleCellule}>{tension !== 0 ? `${tension.toFixed(1)} V` : '0 V'}</div>
+      <div style={styleCellule}>{courant !== 0 ? `${courant.toFixed(2)} A` : '0 A'}</div>
+      <div style={styleCellule}>{puissance !== 0 ? `${puissance.toFixed(0)} W` : '0 W'}</div>
     </div>
   );
 
