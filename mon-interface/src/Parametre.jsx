@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import iconeAgrandir from './dessin/0-agrandir.svg';
 
 function Parametre({ date, heure, mode, setMode }) {
     const [popupOuverte, setPopupOuverte] = useState(false);
+
+    useEffect(() => {
+      const ecouterClavier = (e) => {
+        if (e.key === 'Escape') {
+          setPopupOuverte(false);
+        }
+      };
+      if (popupOuverte) {
+        window.addEventListener('keydown', ecouterClavier);
+      }
+      return () => {
+        window.removeEventListener('keydown', ecouterClavier);
+      };
+    }, [popupOuverte]);
   
     const mode_expert = mode === 'expert';
     const mode_simple = mode === 'simple';

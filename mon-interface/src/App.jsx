@@ -15,9 +15,6 @@ import Conso_Expert_2 from './Conso_Expert_2';
 
 import tournerTel from './dessin/0-tourner_tel.svg';
 
-const nb_pages = 6;
-const barres = Array.from({ length: nb_pages });
-
 function App() {
 
   const [mesures, setMesures] = useState({
@@ -292,8 +289,21 @@ function App() {
   const [modeUtilisateur, setModeUtilisateur] = useState('simple');
   const [page, setPage] = useState(0);
 
-  const pageSuivante = () => setPage((p) => (p < nb_pages - 1 ? p + 1 : 0));
-  const pagePrecedente = () => setPage((p) => (p > 0 ? p - 1 : nb_pages - 1));
+  const nbPages = modeUtilisateur === 'expert' ? 6 : 5;
+  const barres = Array.from({ length: nbPages });
+
+  const gererChangementMode = (nouveauMode) => {
+    setModeUtilisateur(nouveauMode); 
+
+    if (nouveauMode === 'expert' && page === 4) {
+      setPage(5);
+    } else if (nouveauMode === 'simple' && page === 5) {
+      setPage(4);
+    } 
+  };
+
+  const pageSuivante = () => setPage((p) => (p < nbPages - 1 ? p + 1 : 0));
+  const pagePrecedente = () => setPage((p) => (p > 0 ? p - 1 : nbPages - 1));
 
   const [clavierGaucheActif, setClavierGaucheActif] = useState(false);
   const [clavierDroiteActif, setClavierDroiteActif] = useState(false);
@@ -348,6 +358,7 @@ function App() {
 
         <div style={{ width: 'calc(100% - 170px)', height: '95%', alignSelf: 'center', marginLeft: 'calc(170px / 2)', marginRight: 'calc(170px / 2)', backgroundColor: 'rgb(255, 255, 255)', borderRadius: '20px', border: '1px solid #9c9c9c57', boxShadow: '0 8px 20px rgba(0, 0, 0, 0.05)', padding: '10px', display: 'flex', flexDirection: 'column', textAlign: 'center', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
 
+          {/* --- PAGE 0 --- */}
           {page === 0 && (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Accueil</h1>
@@ -366,6 +377,7 @@ function App() {
             </section>
           )}
 
+          {/* --- PAGE 1 --- */}
           {page === 1 && (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Commande des Lumières</h1>
@@ -378,6 +390,7 @@ function App() {
             </section>
           )}
 
+          {/* --- PAGE 2 --- */}
           {page === 2 && (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Rice Cooker</h1>
@@ -394,6 +407,7 @@ function App() {
             </section>
           )}
 
+          {/* --- PAGE 3 --- */}
           {page === 3 && (
             modeUtilisateur === 'expert' ? (
               <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
@@ -423,38 +437,45 @@ function App() {
             )
           )}
 
+          {/* --- PAGE 4 --- */}
           {page === 4 && (
-            modeUtilisateur === 'expert' ? (
-              <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-                <h1>Consommation Actuelle</h1>
-                <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                  <Conso_Expert_1 
-                    mesures={mesures} 
-                    etatLampes={etatLampes} 
-                    basculerLampe={basculerLampe} 
-                    basculerToutesLesLampes={basculerToutesLesLampes}
-                    basculerEquipement={basculerEquipement} 
-                  />
-                </div>
-              </section>
+            <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+              {modeUtilisateur === 'expert' ? (
+                <>
+                  <h1>Consommation Actuelle 2/2</h1>
+                  <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
+                    <Conso_Expert_1 
+                      mesures={mesures} 
+                      etatLampes={etatLampes} 
+                      basculerLampe={basculerLampe} 
+                      basculerToutesLesLampes={basculerToutesLesLampes}
+                      basculerEquipement={basculerEquipement} 
+                    />
+                  </div>
+                </>
             ) : (
-              <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-                <h1>Mode Simple</h1>
-              </section>
-            )
+              <>  
+                <h1>Paramètres</h1>
+                <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
+                  <Parametre date={date} heure={heure} mode={modeUtilisateur} setMode={gererChangementMode} />
+                </div>
+              </>
+            )}
+            </section>
           )}
 
-          {page === 5 && (
+          {/* --- PAGE 5 --- */}
+          {page === 5 && modeUtilisateur === 'expert' && (
             <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
               <h1>Paramètres</h1>
               <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
-                <Parametre date={date} heure={heure} mode={modeUtilisateur} setMode={setModeUtilisateur} />
+                <Parametre date={date} heure={heure} mode={modeUtilisateur} setMode={gererChangementMode} />
               </div>
             </section>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignSelf: 'bottom', gap: '10px', justifyContent: 'center', marginTop: '25px', marginBottom: '0px', zIndex: nb_pages }}>
+        <div style={{ display: 'flex', alignSelf: 'bottom', gap: '10px', justifyContent: 'center', marginTop: '25px', marginBottom: '0px', zIndex: nbPages + 1 }}>
           {barres.map((_, i) => (
             <div key={i} style={{ 
               width: '20%',
