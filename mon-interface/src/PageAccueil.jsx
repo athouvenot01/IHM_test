@@ -40,7 +40,7 @@ function PageAccueil({ vitesseVent, heure, soc, autonomieH, etatBatterie, consoG
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <p>Consommation générale : </p>
-                <p style={{...styleValeur, marginLeft: '20px', marginBottom: '15px' }}>{Number(consoGlobale) || 0} W</p>
+                <p style={{...styleValeur, marginLeft: '20px', marginBottom: '15px' }}>{Number(consoGlobale).toFixed(1) || 0} W</p>
                 <p>Consommation continue : </p>
                 <p style={{...styleValeur, marginLeft: '20px' }}>{Number(consoMicro).toFixed(1)} W</p>
               </div>
@@ -103,7 +103,7 @@ function PageAccueil({ vitesseVent, heure, soc, autonomieH, etatBatterie, consoG
               <p>Vent :</p>
               <p style={styleValeur}>{vitesseVent === '--' ? 0 : vitesseVent} km/h</p>
               <p style={{ marginTop: '15px' }}>Production :</p>
-              <p style={{...styleValeur}}>{Number(productionAlternateur) || 0} W</p>
+              <p style={{...styleValeur}}>{Number(productionAlternateur).toFixed(1) || 0} W</p>
             </div>
 
             <img 

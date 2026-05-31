@@ -61,7 +61,7 @@ function PageRiceCooker({ etatRiceCooker, puissanceConso, tpsCuissonMin, tpsMain
       }}>
         <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation actuelle :</h2>
         <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: estAllume ? '#e67224' : '#9e4728' }}>
-          {consoValue} W
+          {consoValue.toFixed(1)} W
         </p>
       </div>
 

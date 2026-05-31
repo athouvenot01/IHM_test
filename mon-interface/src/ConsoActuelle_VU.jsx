@@ -85,7 +85,7 @@ function ConsoActuelle_VU({pMicro, pRice, pUsbB, pUsbC, pFrigo, pLeds, pTotal, p
       }}>
         <h2 style={{ margin: 0, fontSize: '35px' }}>Consommation Totale :</h2>
         <p style={{ margin: 0, fontSize: '38px', fontWeight: 'bold', color: '#e67224' }}>
-          {Number(pTotal) || 0} W
+          {Number(pTotal).toFixed(1) || 0} W
         </p>
       </div>
 
