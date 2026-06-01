@@ -27,7 +27,7 @@ function App() {
     vUsbB: 0, aUsbB: 0, pUsbB: 0, usbB: 0,
     vMicro: 0, aMicro: 0, pMicro: 0,
     vBatterie: 0, aBatterie: 0, pBatterie: 0, soc: 0, autonomieH: 0, etatBatterie: 0, alerte: 0,
-    vAtlernateur: 0, aAlternateur: 0, pAlternateur: 0,
+    vAlternateur: 0, aAlternateur: 0, pAlternateur: 0,
     pTotal: 0
   });
 
@@ -75,7 +75,12 @@ function App() {
       }
 
       if (payload.id === "alternateur") {
-        setMesures((anciennes) => ({ ...anciennes, p_alternateur: payload.puissance ?? 0 }));
+        setMesures((anciennes) => ({
+          ...anciennes,
+          vAlternateur: payload.tension ?? 0,
+          aAlternateur: payload.courant ?? 0,
+          pAlternateur: payload.puissance ?? 0
+        }));
       }
 
       if (payload.id === "frigo") {
@@ -411,7 +416,7 @@ function App() {
           {page === 3 && (
             modeUtilisateur === 'expert' ? (
               <section style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
-                <h1>Consommation Actuelle</h1>
+                <h1>Consommation Actuelle 1/2</h1>
                 <div style={{ marginTop: '20px', flex: 1, display: 'flex'}}>
                   <Conso_Expert_2 
                     mesures={mesures}
